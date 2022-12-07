@@ -1,19 +1,19 @@
 class V1::ContactsController < ApplicationController
   def index 
-    @contacts = Contact.all 
+    @contacts = current_user.contacts 
 
     render :index, status: :ok
   end
 
   def create
-    @contact = Contact.new(contact_params)
+    @contact = current_user.contacts.build(params[:contact])
     
     @contact.save
     render :create, status: :created
   end
 
   def destroy
-    @contact = Contact.where(id: params[:id]).first
+    @contact = current_user.contacts.where(id: params[:id]).first
     if @contat.destroy
       head(:ok)
     else
@@ -24,7 +24,7 @@ class V1::ContactsController < ApplicationController
   private
 
   def contact_params
-    params.fetch(:contact, {}).permit(:first_name, :last_name, :email)
+    params.require(:contact).permit(:first_name, :last_name, :email)
   end
   
 end
